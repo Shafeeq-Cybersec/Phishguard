@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Large / re-downloadable data (the dataset can be re-fetched; see README)
+data/*.csv
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Keep the trained model committed (model/phishguard_model.pkl) so the app
+# runs immediately after clone without retraining.

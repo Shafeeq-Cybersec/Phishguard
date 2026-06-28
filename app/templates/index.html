@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhishGuard AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2L4 5v6c0 5 3.4 8.6 8 11 4.6-2.4 8-6 8-11V5l-8-3z"
+              fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      PhishGuard
+    </div>
+    <a class="nav-link" href="/model">Model Details</a>
+  </header>
+
+  <main class="hero">
+    <p class="eyebrow">Phishing URL scanner</p>
+    <h1>Know before you click.</h1>
+
+    <!-- the scanner bar is the hero -->
+    <div class="scanbar" id="scanbar">
+      <svg class="scan-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+        <path d="M21 21l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <input id="urlInput" type="text" autocomplete="off" spellcheck="false"
+             placeholder="Paste a link to check…" />
+      <button id="scanBtn" type="button">
+        <span class="btn-label">Scan</span>
+        <span class="spinner" aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <div id="errorBox" class="error-box" hidden></div>
+
+    <!-- product positioning -->
+    <p class="meta">
+      AI Threat Detection Engine · <b data-stat="trained_on">…</b> URLs analyzed ·
+      Structural Analysis · Privacy First · No URL is visited
+    </p>
+
+    <p class="try">
+      <span>try</span>
+      <button class="chip" data-url="https://www.google.com">google.com</button>
+      <button class="chip" data-url="https://www.paypal.com/signin">paypal.com/signin</button>
+      <button class="chip" data-url="http://paypal.com.login-update.ru/signin">a spoof</button>
+      <button class="chip" data-url="http://192.168.0.1/secure/login/verify-account.php?confirm=1">an IP login</button>
+      <button class="chip" data-url="http://bit.ly/3xKw9zQ">a short link</button>
+    </p>
+
+    <!-- processing animation (filled by JS while scanning) -->
+    <section class="processing" id="processing" hidden></section>
+
+    <!-- result -->
+    <section class="result" id="resultCard" hidden>
+      <div class="result-head">
+        <div class="verdict-block">
+          <span class="verdict-icon" id="verdictIcon"></span>
+          <span class="verdict-text">
+            <span class="verdict" id="verdictBadge">—</span>
+            <span class="verdict-sub" id="verdictSub"></span>
+          </span>
+        </div>
+        <div class="risk-block">
+          <div class="risk"><span id="gaugeScore">0</span><small>%</small></div>
+          <div class="risk-label">risk score</div>
+        </div>
+      </div>
+
+      <div class="meter"><div class="meter-fill" id="riskBar"></div></div>
+
+      <div class="result-info">
+        <span class="info-label">Scanned</span>
+        <code class="result-url" id="detailUrl">—</code>
+      </div>
+
+      <span class="trusted-pill" id="trustedRow" hidden>
+        ✓ Domain on allowlist · risk adjusted to <em id="adjustedRisk">…</em>
+      </span>
+
+      <!-- Domain analysis -->
+      <div class="block">
+        <h4 class="block-title">Domain analysis</h4>
+        <div class="kv"><span>Registered domain</span><b class="mono" id="regDomain">—</b></div>
+        <div class="kv" id="orgRow" hidden><span>Organization</span><b id="orgName">—</b></div>
+        <div class="kv" id="claimedRow" hidden><span>Claimed brand</span><b id="claimedBrand">—</b></div>
+        <span class="warn-pill" id="impersonationPill" hidden>⚠ Possible brand impersonation</span>
+      </div>
+
+      <!-- HTTPS note (only when https) -->
+      <div class="block" id="httpsBlock" hidden>
+        <h4 class="block-title">HTTPS detected</h4>
+        <p class="note">⚠ HTTPS encrypts the connection. It does <b>not</b> prove the website is trustworthy. Phishing sites use HTTPS too.</p>
+      </div>
+
+      <!-- Risk breakdown -->
+      <div class="block" id="breakdownBlock">
+        <h4 class="block-title">Risk breakdown</h4>
+        <ul class="breakdown" id="breakdownList"></ul>
+        <div class="breakdown-total"><span>Total risk</span><b id="breakdownTotal">—</b></div>
+      </div>
+
+      <!-- Detected keywords -->
+      <div class="block" id="keywordsBlock">
+        <h4 class="block-title">Detected keywords</h4>
+        <div class="kw-row" id="keywordsList"></div>
+      </div>
+
+      <!-- URL features -->
+      <div class="block">
+        <h4 class="block-title">URL features</h4>
+        <div class="feat-table" id="featTable"></div>
+        <p class="note" id="lenNote" hidden>Long URLs often hide the true destination and make malicious links appear legitimate.</p>
+      </div>
+
+      <!-- Collapsible model explanation -->
+      <details class="explain">
+        <summary>Explain prediction</summary>
+        <div class="explain-body">
+          <p class="explain-head">Random Forest · ensemble vote</p>
+          <div class="votes">
+            <div class="vote phishing"><b id="votePhish">—</b><span>trees → Phishing</span></div>
+            <div class="vote safe"><b id="voteSafe">—</b><span>trees → Safe</span></div>
+          </div>
+          <div class="kv"><span>Final vote</span><b id="voteFinal">—</b></div>
+          <div class="kv"><span>Model confidence</span><b id="voteConf">—</b></div>
+          <p class="note" id="voteNote" hidden></p>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <footer class="foot">Structural analysis only. Links are never visited.</footer>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

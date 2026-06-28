@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Model Details | PhishGuard AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2L4 5v6c0 5 3.4 8.6 8 11 4.6-2.4 8-6 8-11V5l-8-3z"
+              fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      PhishGuard
+    </div>
+    <a class="nav-link" href="/">Scanner</a>
+  </header>
+
+  <main class="md-wrap">
+
+    <p class="eyebrow" style="text-align:center">Under the hood</p>
+    <h1 class="md-title">Model Details</h1>
+    <p class="md-sub">How PhishGuard detects phishing, explained simply.</p>
+
+    <!-- Algorithm -->
+    <section class="md-card">
+      <h2 class="md-section">Algorithm</h2>
+      <ul class="md-list">
+        <li>Uses a <b>Random Forest</b>: 150 decision trees that each vote "phishing" or "safe".</li>
+        <li>The final answer is the <b>majority vote</b> across all trees.</li>
+        <li>Trees are constrained (max depth 20, min 20 samples per leaf) to avoid memorizing training data.</li>
+      </ul>
+      <div class="md-stat-row">
+        <div class="md-stat"><b>150</b><span>trees</span></div>
+        <div class="md-stat"><b>20</b><span>max depth</span></div>
+        <div class="md-stat"><b>20</b><span>min samples/leaf</span></div>
+        <div class="md-stat"><b>22</b><span>features</span></div>
+      </div>
+    </section>
+
+    <!-- Dataset -->
+    <section class="md-card">
+      <h2 class="md-section">Dataset</h2>
+      <ul class="md-list">
+        <li>Trained on <b>Mitake/PhishingURLsANDBenignURLs</b> from HuggingFace (~120K URLs).</li>
+        <li>Both phishing and safe URLs are full links with paths, so the model learns real patterns not just URL format.</li>
+        <li>Split 80% training, 20% testing. Classes are balanced 50/50.</li>
+      </ul>
+      <div class="md-stat-row">
+        <div class="md-stat"><b>~120K</b><span>total URLs</span></div>
+        <div class="md-stat"><b>50 / 50</b><span>phishing / benign</span></div>
+        <div class="md-stat"><b>80 / 20</b><span>train / test</span></div>
+      </div>
+      <div class="md-note">
+        <b>Lesson learned:</b> Our first dataset had safe URLs as bare domains (google.com) and phishing as deep links. The model got 99.4% accuracy by learning URL format, not phishing signals. We switched datasets to fix this.
+      </div>
+    </section>
+
+    <!-- Performance -->
+    <section class="md-card">
+      <h2 class="md-section">Performance</h2>
+      <div class="md-stat-row">
+        <div class="md-stat"><b>86.5%</b><span>test accuracy</span></div>
+        <div class="md-stat"><b>0.94</b><span>ROC-AUC</span></div>
+      </div>
+      <ul class="md-list" style="margin-top:16px">
+        <li><b>Accuracy</b> means 86.5 out of 100 URLs are classified correctly on unseen data.</li>
+        <li><b>ROC-AUC of 0.94</b> means the model reliably ranks phishing URLs higher than safe ones. 1.0 is perfect, 0.5 is random guessing.</li>
+        <li>86.5% on a clean dataset is more trustworthy than a "99%" result, which usually signals a data problem.</li>
+      </ul>
+    </section>
+
+    <!-- Feature Engineering -->
+    <section class="md-card">
+      <h2 class="md-section">Feature Engineering</h2>
+      <ul class="md-list">
+        <li>The model <b>never visits</b> the URL. It only reads the URL as text and extracts 22 structural signals.</li>
+        <li>These signals are called <b>lexical features</b>: things you can measure from the characters and words in the URL.</li>
+      </ul>
+      <table class="md-table" style="margin-top:16px">
+        <thead>
+          <tr><th>Feature</th><th>What it checks</th><th>Why it matters</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">url_length</td><td>How long is the URL?</td><td>Phishing URLs are often very long to hide the real domain.</td></tr>
+          <tr><td class="mono">num_dots</td><td>How many dots?</td><td>More dots = more subdomains (e.g. paypal.com.evil.ru).</td></tr>
+          <tr><td class="mono">num_hyphens</td><td>How many hyphens?</td><td>Attackers use hyphens to fake brand names: paypal-secure.com.</td></tr>
+          <tr><td class="mono">num_subdomains</td><td>How deep is the subdomain?</td><td>Deep nesting hides the real registered domain from users.</td></tr>
+          <tr><td class="mono">has_ip</td><td>Is the host an IP address?</td><td>Legitimate websites use domain names, not raw IPs like 192.168.0.1.</td></tr>
+          <tr><td class="mono">has_https</td><td>Does it use https?</td><td>HTTPS alone does not mean safe. Phishing sites use it too.</td></tr>
+          <tr><td class="mono">has_at_symbol</td><td>Does it have an @ symbol?</td><td>Browsers redirect to the part after @, so http://safe.com@evil.com goes to evil.com.</td></tr>
+          <tr><td class="mono">is_shortened</td><td>Is it a URL shortener?</td><td>Shorteners (bit.ly, tinyurl) hide the real destination.</td></tr>
+          <tr><td class="mono">suspicious_word_count</td><td>Words like login, verify, secure?</td><td>Phishing pages copy login flows and use these words in the URL path.</td></tr>
+          <tr><td class="mono">suspicious_tld</td><td>Unusual TLD like .zip or .review?</td><td>These cheap TLDs are heavily used for phishing.</td></tr>
+          <tr><td class="mono">num_digits</td><td>How many digits?</td><td>Randomly generated phishing URLs tend to have many digits.</td></tr>
+          <tr><td class="mono">digit_ratio</td><td>Digits as a fraction of URL length?</td><td>Normalizes the digit count so short and long URLs are compared fairly.</td></tr>
+          <tr><td class="mono">longest_token</td><td>Longest path segment?</td><td>Long random tokens like /a3f9b2c1d8 are common in phishing links.</td></tr>
+          <tr><td class="mono">num_question_marks</td><td>Has a query string?</td><td>Complex query strings can hide obfuscated payloads.</td></tr>
+          <tr><td class="mono">num_ampersands</td><td>How many parameters (&amp;)?</td><td>Many parameters often appear in phishing redirect chains.</td></tr>
+          <tr><td class="mono">num_equals</td><td>How many = signs?</td><td>Too many key=value pairs can signal excessive parameter abuse.</td></tr>
+          <tr><td class="mono">num_underscores</td><td>How many underscores?</td><td>Underscores in domain names are rare in legitimate websites.</td></tr>
+          <tr><td class="mono">num_percent</td><td>How many % characters?</td><td>Percent-encoding (%20, %3D) can be used to obfuscate URLs.</td></tr>
+          <tr><td class="mono">num_slashes</td><td>How many slashes?</td><td>Very deep paths with many slashes are common in phishing redirect chains.</td></tr>
+          <tr><td class="mono">path_length</td><td>How long is the path?</td><td>Long paths often contain random junk to confuse scanners.</td></tr>
+          <tr><td class="mono">hostname_length</td><td>How long is the hostname?</td><td>Long hostnames usually mean deep subdomain nesting or fake brand names.</td></tr>
+          <tr><td class="mono">num_at_symbol</td><td>Count of @ in the URL?</td><td>Multiple @ symbols are used in advanced redirect tricks.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- URL Normalization -->
+    <section class="md-card">
+      <h2 class="md-section">URL Normalization</h2>
+      <ul class="md-list">
+        <li>Before extracting features, <code>https://</code> and leading <code>www.</code> are stripped from every URL.</li>
+        <li>This keeps the format consistent between training data and live user input.</li>
+      </ul>
+      <div class="md-example">
+        <div class="md-ex-row">
+          <span class="md-ex-label">User pastes</span>
+          <code>https://www.google.com/search?q=flask</code>
+        </div>
+        <div class="md-ex-row">
+          <span class="md-ex-label">Normalized to</span>
+          <code>google.com/search?q=flask</code>
+          <span class="md-ex-badge">model input</span>
+        </div>
+      </div>
+      <div class="md-note">
+        Without this fix, <code>https://www.google.com</code> had extra dots, slashes, and characters compared to how Google looked in training data. The model was flagging the real Google as phishing because of that mismatch.
+      </div>
+    </section>
+
+    <!-- Allowlist -->
+    <section class="md-card">
+      <h2 class="md-section">Trusted Domain Allowlist</h2>
+      <ul class="md-list">
+        <li>The model reads characters, not intent. Words like <code>login</code> and <code>signin</code> push the score higher even on real sites like <code>paypal.com/signin</code>.</li>
+        <li>A curated list of ~30 trusted brands overrides the model score when the registered domain is known safe.</li>
+        <li>Matching checks the actual registered domain, so <code>paypal.com.evil.ru</code> is NOT matched as PayPal. The real domain is <code>evil.ru</code>.</li>
+      </ul>
+      <div class="md-pipeline">
+        <div class="md-pipe-step">URL input</div>
+        <div class="md-pipe-arrow">→</div>
+        <div class="md-pipe-step">Feature extraction</div>
+        <div class="md-pipe-arrow">→</div>
+        <div class="md-pipe-step">Random Forest<br><span class="md-pipe-sub">150 trees vote</span></div>
+        <div class="md-pipe-arrow">→</div>
+        <div class="md-pipe-step">Allowlist check<br><span class="md-pipe-sub">override if trusted</span></div>
+        <div class="md-pipe-arrow">→</div>
+        <div class="md-pipe-step">Final verdict</div>
+      </div>
+    </section>
+
+    <!-- Limitations -->
+    <section class="md-card">
+      <h2 class="md-section">Limitations</h2>
+      <ul class="md-list">
+        <li><b>Lexical only.</b> The model never visits the URL. A clean-looking phishing link like <code>x.co/abc</code> may score low risk even if it leads to a malicious page.</li>
+        <li><b>False positives on auth words.</b> Real sites with <code>login</code> or <code>signin</code> in the path can score higher. The allowlist covers known brands but not every legitimate site.</li>
+        <li><b>Static allowlist.</b> The trusted domain list is manually maintained (~30 brands) and does not auto-update.</li>
+        <li><b>No threat intelligence.</b> A brand-new phishing domain with a short, clean URL can evade detection until it shows structural red flags.</li>
+      </ul>
+    </section>
+
+    <p class="md-footer">PhishGuard AI · portfolio ML project.</p>
+
+  </main>
+</body>
+</html>
