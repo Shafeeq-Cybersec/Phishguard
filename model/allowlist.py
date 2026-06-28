@@ -20,6 +20,9 @@ TRUSTED_DOMAINS = {
     "exploit-db.com", "cve.mitre.org", "nvd.nist.gov", "sans.org",
     "owasp.org", "malwarebytes.com", "avast.com", "norton.com",
     "kaspersky.com", "crowdstrike.com", "paloaltonetworks.com",
+    "phishtank.org", "phishtank.com", "urlvoid.com", "urlscan.io",
+    "hybrid-analysis.com", "any.run", "abuse.ch", "threatfox.abuse.ch",
+    "cyberchef.org", "censys.io", "greynoise.io",
 }
 
 
