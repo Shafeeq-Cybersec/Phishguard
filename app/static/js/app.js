@@ -1,4 +1,4 @@
-/* PhishGuard AI — scanner UI logic. Pure consumer of the JSON API. */
+/* PhishGuard AI - scanner UI logic. */
 
 const el = (id) => document.getElementById(id);
 const urlInput = el("urlInput");
@@ -122,7 +122,7 @@ function renderResult(d) {
 
   // Domain analysis: show Organization for legit brands, "Claimed Brand" for spoofs
   const dom = d.domain || {};
-  el("regDomain").textContent = dom.registered_domain || "—";
+  el("regDomain").textContent = dom.registered_domain || "-";
 
   const orgRow = el("orgRow");
   const claimedRow = el("claimedRow");
@@ -161,8 +161,8 @@ function renderResult(d) {
 
   // Random Forest tree votes (real ensemble breakdown)
   const tv = d.tree_votes || {};
-  el("votePhish").textContent = tv.phishing_trees ?? "—";
-  el("voteSafe").textContent = tv.safe_trees ?? "—";
+  el("votePhish").textContent = tv.phishing_trees ?? "-";
+  el("voteSafe").textContent = tv.safe_trees ?? "-";
   el("voteFinal").textContent = (tv.vote_pct ?? 0) + "% phishing";
   el("voteConf").textContent = (d.model_risk ?? 0) + "%";
   // Only explain an override when the model actually disagreed with the allowlist.

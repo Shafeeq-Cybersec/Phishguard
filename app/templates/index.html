@@ -67,7 +67,7 @@
         <div class="verdict-block">
           <span class="verdict-icon" id="verdictIcon"></span>
           <span class="verdict-text">
-            <span class="verdict" id="verdictBadge">—</span>
+            <span class="verdict" id="verdictBadge">-</span>
             <span class="verdict-sub" id="verdictSub"></span>
           </span>
         </div>
@@ -81,26 +81,26 @@
 
       <div class="result-info">
         <span class="info-label">Scanned</span>
-        <code class="result-url" id="detailUrl">—</code>
+        <code class="result-url" id="detailUrl">-</code>
       </div>
       <div class="result-info" id="resolvedRow" hidden style="margin-top:8px">
         <span class="info-label">Resolved</span>
-        <code class="result-url" id="resolvedUrl">—</code>
+        <code class="result-url" id="resolvedUrl">-</code>
       </div>
 
       <span class="trusted-pill" id="trustedRow" hidden>
         ✓ Domain on allowlist · risk adjusted to <em id="adjustedRisk">…</em>
       </span>
       <span class="warn-pill" id="shortenedWarn" hidden style="display:inline-block;margin-top:12px">
-        ⚠ Shortened URL — destination could not be verified. Treat with caution.
+        ⚠ Shortened URL - destination could not be verified. Treat with caution.
       </span>
 
       <!-- Domain analysis -->
       <div class="block">
         <h4 class="block-title">Domain analysis</h4>
-        <div class="kv"><span>Registered domain</span><b class="mono" id="regDomain">—</b></div>
-        <div class="kv" id="orgRow" hidden><span>Organization</span><b id="orgName">—</b></div>
-        <div class="kv" id="claimedRow" hidden><span>Claimed brand</span><b id="claimedBrand">—</b></div>
+        <div class="kv"><span>Registered domain</span><b class="mono" id="regDomain">-</b></div>
+        <div class="kv" id="orgRow" hidden><span>Organization</span><b id="orgName">-</b></div>
+        <div class="kv" id="claimedRow" hidden><span>Claimed brand</span><b id="claimedBrand">-</b></div>
         <span class="warn-pill" id="impersonationPill" hidden>⚠ Possible brand impersonation</span>
       </div>
 
@@ -114,7 +114,7 @@
       <div class="block" id="breakdownBlock">
         <h4 class="block-title">Risk breakdown</h4>
         <ul class="breakdown" id="breakdownList"></ul>
-        <div class="breakdown-total"><span>Total risk</span><b id="breakdownTotal">—</b></div>
+        <div class="breakdown-total"><span>Total risk</span><b id="breakdownTotal">-</b></div>
       </div>
 
       <!-- Detected keywords -->
@@ -136,11 +136,11 @@
         <div class="explain-body">
           <p class="explain-head">Random Forest · ensemble vote</p>
           <div class="votes">
-            <div class="vote phishing"><b id="votePhish">—</b><span>trees → Phishing</span></div>
-            <div class="vote safe"><b id="voteSafe">—</b><span>trees → Safe</span></div>
+            <div class="vote phishing"><b id="votePhish">-</b><span>trees → Phishing</span></div>
+            <div class="vote safe"><b id="voteSafe">-</b><span>trees → Safe</span></div>
           </div>
-          <div class="kv"><span>Final vote</span><b id="voteFinal">—</b></div>
-          <div class="kv"><span>Model confidence</span><b id="voteConf">—</b></div>
+          <div class="kv"><span>Final vote</span><b id="voteFinal">-</b></div>
+          <div class="kv"><span>Model confidence</span><b id="voteConf">-</b></div>
           <p class="note" id="voteNote" hidden></p>
         </div>
       </details>
@@ -148,7 +148,7 @@
   </main>
 
   <footer class="foot">
-    <p>Structural analysis only. Shortened URLs are resolved via redirect — pages are never loaded.</p>
+    <p>Structural analysis only. Shortened URLs are resolved via redirect - pages are never loaded.</p>
     <p class="foot-credit">
       Built by <b>Shafeeq S</b>
       <a class="foot-icon" href="https://github.com/Shafeeq-Cybersec" target="_blank" rel="noopener" aria-label="GitHub">
