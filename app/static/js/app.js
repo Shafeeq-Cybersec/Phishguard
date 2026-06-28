@@ -114,6 +114,7 @@ function renderResult(d) {
   } else {
     resolvedRow.hidden = true;
   }
+  el("shortenedWarn").hidden = !d.shortened_unresolved;
 
   // Domain analysis: show Organization for legit brands, "Claimed Brand" for spoofs
   const dom = d.domain || {};

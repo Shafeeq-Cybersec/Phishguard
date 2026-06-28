@@ -53,11 +53,14 @@ def scan_url(url: str) -> dict:
 
     original_url = url
     resolved_url = None
+    shortened_unresolved = False
     if is_shortened_url(url):
         resolved = resolve_url(url)
         if resolved != url:
             resolved_url = resolved
             url = resolved
+        else:
+            shortened_unresolved = True
 
     artifact = _load()
     clf = artifact["model"]
@@ -84,6 +87,7 @@ def scan_url(url: str) -> dict:
     return {
         "url": original_url,
         "resolved_url": resolved_url,
+        "shortened_unresolved": shortened_unresolved,
         "normalized": normalize_url(url),
         "verdict": verdict,
         "risk_score": risk_score,
