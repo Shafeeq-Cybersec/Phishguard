@@ -7,3 +7,4 @@ joblib==1.4.2            # fast serialization of the trained model (.pkl)
 # --- Web backend (Phase 2) ---
 Flask==3.1.0             # lightweight web framework for the API + page serving
 gunicorn==26.0.0         # production WSGI server (required for Render deployment)
+requests==2.34.2         # HTTP redirect resolution for shortened URLs

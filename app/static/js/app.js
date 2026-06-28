@@ -106,7 +106,14 @@ function renderResult(d) {
   el("riskBar").style.width = d.risk_score + "%";
   animateNumber(el("gaugeScore"), d.risk_score);
 
-  el("detailUrl").textContent = d.normalized || d.url;
+  el("detailUrl").textContent = d.url;
+  const resolvedRow = el("resolvedRow");
+  if (d.resolved_url) {
+    resolvedRow.hidden = false;
+    el("resolvedUrl").textContent = d.resolved_url;
+  } else {
+    resolvedRow.hidden = true;
+  }
 
   // Domain analysis: show Organization for legit brands, "Claimed Brand" for spoofs
   const dom = d.domain || {};

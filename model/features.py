@@ -91,3 +91,9 @@ def extract_features(url: str) -> dict:
 def featurize(url: str) -> list:
     f = extract_features(url)
     return [f[name] for name in FEATURE_NAMES]
+
+
+def is_shortened_url(url: str) -> bool:
+    parsed = _safe_parse(normalize_url(url))
+    hostname = (parsed.hostname or "").lower()
+    return any(s in hostname for s in SHORTENERS)

@@ -2,14 +2,26 @@ import os
 import re
 
 import joblib
+import requests
 
 from model.allowlist import is_trusted
 from model.analysis import (analyze_domain, detected_keywords, feature_table,
                             risk_breakdown, tree_votes)
 from model.features import extract_features, featurize, normalize_url
+from model.features import is_shortened_url
 
 _MODEL_PATH = os.path.join(os.path.dirname(__file__), "phishguard_model.pkl")
 _artifact = None
+
+
+def resolve_url(url: str) -> str:
+    try:
+        r = requests.head(url, allow_redirects=True, timeout=5,
+                          headers={"User-Agent": "Mozilla/5.0"})
+        final = r.url
+        return final if final and final != url else url
+    except Exception:
+        return url
 
 
 def _load():
@@ -38,6 +50,14 @@ def scan_url(url: str) -> dict:
     if not url:
         raise ValueError("empty url")
 
+    original_url = url
+    resolved_url = None
+    if is_shortened_url(url):
+        resolved = resolve_url(url)
+        if resolved != url:
+            resolved_url = resolved
+            url = resolved
+
     artifact = _load()
     clf = artifact["model"]
 
@@ -61,7 +81,8 @@ def scan_url(url: str) -> dict:
     domain = analyze_domain(url)
 
     return {
-        "url": url,
+        "url": original_url,
+        "resolved_url": resolved_url,
         "normalized": normalize_url(url),
         "verdict": verdict,
         "risk_score": risk_score,

@@ -83,6 +83,10 @@
         <span class="info-label">Scanned</span>
         <code class="result-url" id="detailUrl">—</code>
       </div>
+      <div class="result-info" id="resolvedRow" hidden style="margin-top:8px">
+        <span class="info-label">Resolved</span>
+        <code class="result-url" id="resolvedUrl">—</code>
+      </div>
 
       <span class="trusted-pill" id="trustedRow" hidden>
         ✓ Domain on allowlist · risk adjusted to <em id="adjustedRisk">…</em>
@@ -141,7 +145,7 @@
   </main>
 
   <footer class="foot">
-    <p>Structural analysis only. Links are never visited.</p>
+    <p>Structural analysis only. Shortened URLs are resolved via redirect — pages are never loaded.</p>
     <p class="foot-credit">
       Built by <b>Shafeeq S</b>
       <a class="foot-icon" href="https://github.com/Shafeeq-Cybersec" target="_blank" rel="noopener" aria-label="GitHub">
