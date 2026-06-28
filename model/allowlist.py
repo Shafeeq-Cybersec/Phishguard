@@ -1,13 +1,25 @@
 from model.features import normalize_url, _safe_parse
 
 TRUSTED_DOMAINS = {
+    # Big Tech
     "google.com", "gmail.com", "youtube.com", "microsoft.com", "live.com",
     "outlook.com", "office.com", "apple.com", "icloud.com", "amazon.com",
     "facebook.com", "instagram.com", "linkedin.com", "x.com", "twitter.com",
     "github.com", "gitlab.com", "dropbox.com", "adobe.com", "netflix.com",
-    "wikipedia.org", "paypal.com", "stripe.com", "chase.com", "bankofamerica.com",
+    "wikipedia.org", "cloudflare.com", "aws.amazon.com", "azure.microsoft.com",
+    "slack.com", "zoom.us", "notion.so", "figma.com", "canva.com",
+    "shopify.com", "wordpress.com", "medium.com", "substack.com",
+    "stackoverflow.com", "reddit.com", "discord.com", "twitch.tv",
+    "spotify.com", "whatsapp.com", "telegram.org",
+    # Finance
+    "paypal.com", "stripe.com", "chase.com", "bankofamerica.com",
     "wellsfargo.com", "citibank.com", "americanexpress.com", "visa.com",
-    "mastercard.com",
+    "mastercard.com", "coinbase.com", "binance.com",
+    # Cybersecurity
+    "virustotal.com", "shodan.io", "haveibeenpwned.com", "kali.org",
+    "exploit-db.com", "cve.mitre.org", "nvd.nist.gov", "sans.org",
+    "owasp.org", "malwarebytes.com", "avast.com", "norton.com",
+    "kaspersky.com", "crowdstrike.com", "paloaltonetworks.com",
 }
 
 
