@@ -282,7 +282,12 @@ body {
 .vote.phishing b { color: var(--phishing); }
 .vote.safe b { color: var(--safe); }
 
-.foot { text-align: center; color: var(--muted); font-size: .76rem; padding: 0 20px 40px; }
+.foot { text-align: center; color: var(--muted); font-size: .76rem; padding: 0 20px 40px; display: flex; flex-direction: column; gap: 8px; }
+.foot-credit { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.foot-credit b { color: var(--text); }
+.foot-icon { color: var(--muted); display: inline-flex; transition: color .15s; }
+.foot-icon:hover { color: var(--accent); }
+.foot-icon svg { width: 17px; height: 17px; }
 
 @media (max-width: 520px) {
   .scanbar { flex-wrap: wrap; }
