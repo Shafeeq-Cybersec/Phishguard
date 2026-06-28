@@ -16,8 +16,9 @@ _artifact = None
 
 def resolve_url(url: str) -> str:
     try:
-        r = requests.head(url, allow_redirects=True, timeout=5,
-                          headers={"User-Agent": "Mozilla/5.0"})
+        r = requests.get(url, allow_redirects=True, timeout=5, stream=True,
+                         headers={"User-Agent": "Mozilla/5.0"})
+        r.close()
         final = r.url
         return final if final and final != url else url
     except Exception:
