@@ -69,6 +69,23 @@ def scan_url(url: str) -> dict:
     model_risk = round(float(clf.predict_proba([x])[0][1]) * 100, 1)
     https = bool(re.match(r"^https://", url, re.IGNORECASE))
 
+    if shortened_unresolved:
+        return {
+            "url": original_url,
+            "resolved_url": None,
+            "shortened_unresolved": True,
+            "verdict": "UNVERIFIED",
+            "risk_score": None,
+            "model_risk": None,
+            "trusted": False,
+            "https": https,
+            "domain": analyze_domain(original_url),
+            "risk_breakdown": {"items": [], "total": 0},
+            "keywords": detected_keywords(original_url),
+            "features": feature_table(original_url, https),
+            "tree_votes": {},
+        }
+
     trusted = is_trusted(url)
     if trusted:
         risk_score = min(model_risk, 5.0)

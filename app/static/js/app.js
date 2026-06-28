@@ -86,25 +86,29 @@ const ICONS = {
   safe: '<svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   suspicious: '<svg viewBox="0 0 24 24" fill="none"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 9v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   phishing: '<svg viewBox="0 0 24 24" fill="none"><path d="M12 2 4 5v6c0 5 3.4 8.6 8 11 4.6-2.4 8-6 8-11V5l-8-3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  unverified: '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
 };
 const SUBS = {
   safe: "This link looks legitimate.",
   suspicious: "Treat this link with caution.",
   phishing: "This link is likely phishing.",
+  unverified: "Destination could not be verified.",
 };
 
 function renderResult(d) {
   const card = el("resultCard");
-  const verdict = d.verdict.toLowerCase(); // safe | suspicious | phishing
-  card.className = "result " + verdict;     // sets --vc; colors flow from CSS
+  const verdict = d.verdict.toLowerCase();
+  card.className = "result " + verdict;
   card.hidden = false;
 
   el("verdictIcon").innerHTML = ICONS[verdict] || "";
   el("verdictBadge").textContent = d.verdict;
   el("verdictSub").textContent = SUBS[verdict] || "";
 
-  el("riskBar").style.width = d.risk_score + "%";
-  animateNumber(el("gaugeScore"), d.risk_score);
+  const isUnverified = verdict === "unverified";
+  el("riskBar").style.width = isUnverified ? "0%" : d.risk_score + "%";
+  el("gaugeScore").textContent = isUnverified ? "?" : "";
+  if (!isUnverified) animateNumber(el("gaugeScore"), d.risk_score);
 
   el("detailUrl").textContent = d.url;
   const resolvedRow = el("resolvedRow");
