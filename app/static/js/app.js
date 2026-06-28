@@ -154,6 +154,8 @@ function renderResult(d) {
   el("voteFinal").textContent = (tv.vote_pct ?? 0) + "% phishing";
   el("voteConf").textContent = (d.model_risk ?? 0) + "%";
   // Only explain an override when the model actually disagreed with the allowlist.
+  el("explainSection").hidden = !!d.trusted;
+
   const vn = el("voteNote");
   const overridden = d.trusted && d.model_risk >= 50;
   vn.hidden = !overridden;
