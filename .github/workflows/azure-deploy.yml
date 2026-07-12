@@ -1,4 +1,4 @@
-name: Deploy to Azure Container Apps
+name: Deploy to Azure
 
 on:
   push:
@@ -10,15 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Log in to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientId }}
-          client-secret: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientSecret }}
-          subscription-id: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
-          tenant-id: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
-
-      - name: Log in to ACR
+      - name: Log in to Azure Container Registry
         uses: docker/login-action@v3
         with:
           registry: ca9c23a426b2acr.azurecr.io
@@ -30,12 +22,25 @@ jobs:
         with:
           context: .
           push: true
-          tags: ca9c23a426b2acr.azurecr.io/phishguard:${{ github.sha }}
+          tags: ca9c23a426b2acr.azurecr.io/phishguard:latest
 
-      - name: Deploy to Container Apps
-        uses: azure/container-apps-deploy-action@v1
+      - name: Deploy to Container App
+        uses: azure/login@v1
         with:
-          acrName: ca9c23a426b2acr
-          containerAppName: phishguard
-          resourceGroup: promptshield-rg
-          imageToDeploy: ca9c23a426b2acr.azurecr.io/phishguard:${{ github.sha }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Update container app
+        uses: azure/cli@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az containerapp registry set \
+              --name phishguard \
+              --resource-group promptshield-rg \
+              --server ca9c23a426b2acr.azurecr.io \
+              --username ${{ secrets.ACR_USERNAME }} \
+              --password ${{ secrets.ACR_PASSWORD }}
+            az containerapp update \
+              --name phishguard \
+              --resource-group promptshield-rg \
+              --image ca9c23a426b2acr.azurecr.io/phishguard:latest
