@@ -11,9 +11,12 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Log in to Azure
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientId }}
+          client-secret: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientSecret }}
+          subscription-id: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
+          tenant-id: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
 
       - name: Log in to ACR
         uses: docker/login-action@v3
